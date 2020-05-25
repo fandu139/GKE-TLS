@@ -1,0 +1,97 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: web-app-administrasi-test
+  labels:
+    type: endpoints-app
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: web-app-administrasi-test
+    spec:
+      containers:
+      - name: esp
+        image: gcr.io/endpoints-release/endpoints-runtime:1
+        args: [
+          "--http_port=8081",
+          "--backend=127.0.0.1:8080",
+          "--service=$(JWT_AUDIENCE)",
+          "--rollout_strategy=managed",
+        ]
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 8081
+            scheme: HTTP
+        readinessProbe:
+          httpGet:
+            path: /
+            scheme: HTTP
+            port: 8081
+        ports:
+          - name: http
+            containerPort: 8081
+        env:
+        - name: JWT_AUDIENCE
+          valueFrom:
+            configMapKeyRef:
+              name: env-var
+              key: JWT_AUDIENCE
+      - name: web-app-administrasi-test
+        image: gcr.io/administrasi/web-app-administrasi:latest
+        imagePullPolicy: Always
+        ports:
+          - containerPort: 8080
+        env:
+          - name: PORT
+            value: "8080"
+          - name: DB_USER
+            valueFrom:
+              secretKeyRef:
+                name: cloudsql-db-credentials
+                key: username
+          - name: DB_PASS
+            valueFrom:
+              secretKeyRef:
+                name: cloudsql-db-credentials
+                key: password
+          - name: DB_NAME
+            valueFrom:
+              secretKeyRef:
+                name: cloudsql-db-credentials
+                key: dbname
+          - name: DB_PORT
+            valueFrom:
+              secretKeyRef:
+                name: cloudsql-db-credentials
+                key: dbport
+          - name: DB_HOST
+            valueFrom:
+              secretKeyRef:
+                name: cloudsql-db-credentials
+                key: dbhost
+        resources:
+          requests:
+            cpu: 100m
+          limits:
+            cpu: 100m
+      - name: cloudsql-proxy
+        image: gcr.io/cloudsql-docker/gce-proxy:1.16
+        command: ["/cloud_sql_proxy",
+                  "-instances=administrasi:asia-southeast1:administrasi-sql=tcp:3306",
+                  "-credential_file=/secrets/cloudsql/credentials.json"]
+        securityContext:
+          runAsUser: 2  # non-root user
+          allowPrivilegeEscalation: false
+        volumeMounts:
+          - name: cloudsql-instance-credentials
+            mountPath: /secrets/cloudsql
+            readOnly: true
+      volumes:
+        - name: cloudsql-instance-credentials
+          secret:
+            secretName: cloudsql-instance-credentials
+        - name: cloudsql
+          emptyDir: 
