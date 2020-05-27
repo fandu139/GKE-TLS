@@ -18,5 +18,5 @@ spec:
     http:
       paths:
       - backend:
-          serviceName: esp-srv
+          serviceName: web-administrasi-service
           servicePort: 80

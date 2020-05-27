@@ -1,9 +1,9 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: web-app-administrasi-service
+  name: web-administrasi-service
   labels:
-    type: web-app-administrasi-service
+    type: web-administrasi-service
 spec:
   type: NodePort
   ports:
@@ -12,4 +12,4 @@ spec:
     name: http
     targetPort: http
   selector:
-    app: web-app-administrasi
+    app: web-administrasi

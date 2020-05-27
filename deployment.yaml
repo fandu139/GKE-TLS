@@ -1,7 +1,7 @@
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  name: web-app-administrasi
+  name: web-administrasi
   labels:
     type: endpoints-app
 spec:
@@ -9,7 +9,7 @@ spec:
   template:
     metadata:
       labels:
-        app: web-app-administrasi
+        app: web-administrasi
     spec:
       containers:
       - name: esp

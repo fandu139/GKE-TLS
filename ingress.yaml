@@ -13,5 +13,5 @@ spec:
     http:
       paths:
       - backend:
-          serviceName: web-app-administrasi-service
+          serviceName: web-administrasi-service
           servicePort: 80
