@@ -1,7 +1,7 @@
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  name: web-app-administrasi-test
+  name: web-app-administrasi
   labels:
     type: endpoints-app
 spec:
@@ -9,7 +9,7 @@ spec:
   template:
     metadata:
       labels:
-        app: web-app-administrasi-test
+        app: web-app-administrasi
     spec:
       containers:
       - name: esp
@@ -39,7 +39,7 @@ spec:
             configMapKeyRef:
               name: env-var
               key: JWT_AUDIENCE
-      - name: web-app-administrasi-test
+      - name: web-app-administrasi
         image: gcr.io/administrasi/web-app-administrasi:latest
         imagePullPolicy: Always
         ports:
